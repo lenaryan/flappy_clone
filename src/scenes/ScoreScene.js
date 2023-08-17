@@ -2,7 +2,7 @@ import BaseScene from "./BaseScene";
 
 class ScoreScene extends BaseScene {
     constructor(config) {
-        super('ScoreScene', config);
+        super('ScoreScene', {...config, canGoBack: true});
     }
 
     create() {
@@ -14,7 +14,7 @@ class ScoreScene extends BaseScene {
                 fontSize: this.fontSize,
                 fill: '#fff'
             }
-        )
+        ).setOrigin(0.5, 1);
     }
 
    
