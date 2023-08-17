@@ -70,11 +70,18 @@ class PlayScene extends Phaser.Scene {
 
     createScore() {
         this.score = 0;
+        this.bestScore = localStorage.getItem('best-score');
         this.scoreText = this.add.text(
             16, 
             16, 
-            `Score 0`, 
+            `Score: 0`, 
             { fontSize: '32px', fill: '#000'}
+        );
+        this.bestScoreText = this.add.text(
+            16, 
+            50, 
+            `Best score: ${this.bestScore}`, 
+            { fontSize: '18px', fill: '#000'}
         );
     }
 
@@ -122,7 +129,7 @@ class PlayScene extends Phaser.Scene {
 
     increaseScore() {
         this.score += 1;
-        this.scoreText.setText(`Score ${this.score}`)
+        this.scoreText.setText(`Score ${this.score}`);
     }
     
     getRightMostPipe() {
@@ -141,9 +148,17 @@ class PlayScene extends Phaser.Scene {
         }
     }
 
+    saveBestScore() {
+        const best = localStorage.getItem('best-score');
+        if (!best || this.score > best) {
+            localStorage.setItem('best-score', this.score);
+        }
+    }
+
     gameOver() {
         this.physics.pause();
         this.bird.setTint(0xbada55);
+        this.saveBestScore();
 
         this.time.addEvent({
             delay: 1000,
