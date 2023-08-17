@@ -12,6 +12,9 @@ class PlayScene extends Phaser.Scene {
 
         this.pipeVerticalDistanceRange = [150, 250];
         this.pipeHorizontalDistanceRange = [350, 400];
+
+        this.score = 0;
+        this.scoreText = '';
     }
 
     preload() {
@@ -25,6 +28,7 @@ class PlayScene extends Phaser.Scene {
         this.createBird();
         this.createPipes();
         this.createColliders();
+        this.createScore();
         this.handleInputs();
     }
 
@@ -64,6 +68,16 @@ class PlayScene extends Phaser.Scene {
         this.physics.add.collider(this.bird, this.pipes, this.gameOver, null, this);  
     }
 
+    createScore() {
+        this.score = 0;
+        this.scoreText = this.add.text(
+            16, 
+            16, 
+            `Score 0`, 
+            { fontSize: '32px', fill: '#000'}
+        );
+    }
+
     handleInputs() {
         const spaceBar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         this.input.on('pointerdown', this.flap, this);
@@ -96,6 +110,7 @@ class PlayScene extends Phaser.Scene {
             if (tempPipes.length === 2) {
               // why is it working with no cleaning of the temp array?
               this.placePipe(...tempPipes);
+              this.increaseScore(); 
             }
           }
         })
@@ -103,6 +118,11 @@ class PlayScene extends Phaser.Scene {
 
     flap() {
         this.bird.body.velocity.y = -FLAP_VELOCITY;
+    }
+
+    increaseScore() {
+        this.score += 1;
+        this.scoreText.setText(`Score ${this.score}`)
     }
     
     getRightMostPipe() {
