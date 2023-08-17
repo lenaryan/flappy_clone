@@ -54,6 +54,7 @@ function create() {
 
 function update(time, delta) {
   if (bird.y > config.height || bird.y < -bird.height) restartBirdPosition();
+  recyclePipes();
 }
 
 function flap() {
@@ -67,6 +68,8 @@ function restartBirdPosition() {
 }
 
 function placePipe(upper, lower) {
+  // TODO: wtf, it's looping through the whole pipe array every time to get X
+  // probably it's easier to get position of the last pipe only
   const rightMostX = getRightMostPipe();
   const pipeHorizontalDistance = Phaser.Math.Between(pipeHorizontalDistanceRange[0], pipeHorizontalDistanceRange[1])
   const pipeVerticalDistance = Phaser.Math.Between(pipeVerticalDistanceRange[0], pipeVerticalDistanceRange[1]);
@@ -76,6 +79,24 @@ function placePipe(upper, lower) {
   lower.x = upper.x;
   upper.y = pipeVerticalPosition;
   lower.y = upper.y + pipeVerticalDistance;  
+}
+
+function recyclePipes() {
+  // TODO: maybe look at the first one only
+  // for not to loop through the whole array every fucking second
+  // remove the first one after placing pipe
+  const tempPipes = [];
+  pipes.getChildren().forEach(pipe => {
+    if (pipe.getBounds().right <= 0) {
+      // recycle
+      tempPipes.push(pipe);
+      if (tempPipes.length === 2) {
+        // why is it working with no cleaning of the temp array?
+        placePipe(...tempPipes);
+      }
+      debugger
+    }
+  })
 }
 
 function getRightMostPipe() {
