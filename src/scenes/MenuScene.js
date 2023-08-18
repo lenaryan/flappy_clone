@@ -31,6 +31,8 @@ class MenuScene extends BaseScene {
             menuItem.scene && this.scene.start(menuItem.scene);
 
             if (menuItem.text === 'Exit') {
+                // TODO: save best score on exit
+                // this.saveBestScore();
                 this.game.destroy(true);
             }
         })

@@ -11,14 +11,27 @@ class PlayScene extends BaseScene {
         this.pipes = null;
         this.isPaused = false;
 
-        this.pipeVerticalDistanceRange = [150, 250];
-        this.pipeHorizontalDistanceRange = [350, 400];
-
         this.score = 0;
         this.scoreText = '';
+
+        this.difficulties = {
+            'easy': {
+                pipeHorizontalDistanceRange: [300, 350],
+                pipeVerticalDistanceRange: [150, 200]
+            },
+            'normal': {
+                pipeHorizontalDistanceRange: [280, 330],
+                pipeVerticalDistanceRange: [140, 190]
+            },
+            'hard': {
+                pipeHorizontalDistanceRange: [250, 310],
+                pipeVerticalDistanceRange: [120, 170]
+            }
+        }
     }
 
     create() {
+        this.currentDifficulty = 'easy';
         super.create();
         this.createBird();
         this.createPipes();
@@ -125,11 +138,13 @@ class PlayScene extends BaseScene {
     }
 
     placePipe(upper, lower) {
+        const difficulty = this.difficulties[this.currentDifficulty];
+
         // TODO: wtf, it's looping through the whole pipe array every time to get X
         // probably it's easier to get position of the last pipe only
         const rightMostX = this.getRightMostPipe();
-        const pipeHorizontalDistance = Phaser.Math.Between(this.pipeHorizontalDistanceRange[0], this.pipeHorizontalDistanceRange[1])
-        const pipeVerticalDistance = Phaser.Math.Between(this.pipeVerticalDistanceRange[0], this.pipeVerticalDistanceRange[1]);
+        const pipeHorizontalDistance = Phaser.Math.Between(...difficulty.pipeHorizontalDistanceRange)
+        const pipeVerticalDistance = Phaser.Math.Between(...difficulty.pipeVerticalDistanceRange);
         const pipeVerticalPosition = Phaser.Math.Between(20, this.config.height - 20 - pipeVerticalDistance);
       
         upper.x = rightMostX + pipeHorizontalDistance;
@@ -151,9 +166,19 @@ class PlayScene extends BaseScene {
               // why is it working with no cleaning of the temp array?
               this.placePipe(...tempPipes);
               this.increaseScore(); 
+              this.increaseDifficulty();
             }
           }
         })
+    }
+
+    increaseDifficulty() {
+        if (this.score === 5) {
+            this.currentDifficulty = 'normal';
+        }
+        if (this.score === 10) {
+            this.currentDifficulty = 'hard';
+        }
     }
 
     flap() {
