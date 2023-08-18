@@ -9,6 +9,7 @@ class PlayScene extends BaseScene {
 
         this.bird = null;
         this.pipes = null;
+        this.isPaused = false;
 
         this.pipeVerticalDistanceRange = [150, 250];
         this.pipeHorizontalDistanceRange = [350, 400];
@@ -84,6 +85,7 @@ class PlayScene extends BaseScene {
             .setOrigin(1);
 
         pauseButton.on('pointerdown', () => {
+            this.isPaused = true;
             this.physics.pause();
             this.scene.pause();
             this.scene.launch('PauseScene');
@@ -115,6 +117,7 @@ class PlayScene extends BaseScene {
     countDown() {
         this.countDownText.setText('Fly in: ' + --this.initialTime)
         if (this.initialTime <= 0) {
+            this.isPaused = false;
             this.countDownText.setText('');
             this.physics.resume();
             this.timeEvent.remove();
@@ -154,6 +157,7 @@ class PlayScene extends BaseScene {
     }
 
     flap() {
+        if (this.isPaused) return;
         this.bird.body.velocity.y = -FLAP_VELOCITY;
     }
 
